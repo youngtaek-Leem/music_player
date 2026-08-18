@@ -186,13 +186,20 @@ async function scanDirectory(
 }
 
 export async function pickMusicFolder(): Promise<FileSystemDirectoryHandle | null> {
+  if (!('showDirectoryPicker' in window)) {
+    const msg = 'File System Access API가 지원되지 않습니다. iOS Safari 15.2+ 또는 Chrome/Edge 최신 버전에서 HTTPS로 접속하세요.';
+    console.error(msg);
+    emitLibraryEvent({ type: 'error', payload: msg });
+    return null;
+  }
+  
   try {
     const handle = await (window as any).showDirectoryPicker({
       mode: 'readwrite',
     });
     const permission = await handle.requestPermission({ mode: 'readwrite' });
     if (permission !== 'granted') {
-      throw new Error('Permission denied for folder access');
+      throw new Error('폴더 접근 권한이 거부되었습니다. 권한 허용 후 다시 시도하세요.');
     }
     return handle;
   } catch (error) {
