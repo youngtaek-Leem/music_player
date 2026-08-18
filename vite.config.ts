@@ -16,11 +16,11 @@ export default defineConfig({
         background_color: '#1a1a2e',
         display: 'standalone',
         orientation: 'portrait-primary',
-        scope: '/',
-        start_url: '/',
+        scope: '/music_player/',
+        start_url: '/music_player/',
         icons: [
           {
-            src: '/icons.svg',
+            src: '/music_player/icons.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable'
@@ -33,8 +33,8 @@ export default defineConfig({
             name: '음악 재생',
             short_name: '재생',
             description: '마지막 재생 위치부터 음악 재생',
-            url: '/',
-            icons: [{ src: '/icons.svg', sizes: '96x96' }]
+            url: '/music_player/',
+            icons: [{ src: '/music_player/icons.svg', sizes: '96x96' }]
           }
         ]
       },
@@ -42,7 +42,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/.*\.github\.io\/.*/i,
+            urlPattern: /^https:\/\/youngtaek-Leem\.github\.io\/music_player\/.*/i,
             handler: 'CacheFirst',
             options: {
               cacheName: 'github-pages-cache',
@@ -59,7 +59,7 @@ export default defineConfig({
       }
     })
   ],
-  base: '/',
+  base: '/music_player/',
   build: {
     outDir: 'dist',
     sourcemap: true,
