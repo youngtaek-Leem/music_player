@@ -29,6 +29,7 @@ export interface Playlist {
   tracks: Track[];
   folderPath: string;
   folderHandle?: FileSystemDirectoryHandle;
+  isFallback?: boolean;
 }
 
 export interface PlaybackState {

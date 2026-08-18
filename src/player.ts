@@ -130,6 +130,11 @@ export class AudioPlayer {
           console.error('Playback failed:', error);
           this.emit('error', error);
         }
+      } else {
+        // File not available (fallback playlist after reload)
+        this.emit('error', new Error('파일을 다시 선택해주세요. 폴더 선택 버튼을 눌러 음악 파일을 선택하세요.'));
+        this.playNext();
+        return;
       }
       
       this.startPositionSaving();

@@ -283,14 +283,18 @@ export async function scanMusicFolderFromFiles(files: File[], folderName: string
       tracks,
       folderPath,
       folderHandle: undefined,
+      isFallback: true,
     };
     
+    // For fallback mode, only store metadata in IndexedDB, not File objects
+    // File objects are kept only in memory (currentLibraryState.tracks)
     const tx = db.transaction(['tracks', 'playlists'], 'readwrite');
     for (const track of tracks) {
-      const trackWithPlaylist = { ...track, playlistId };
+      const trackWithPlaylist = { ...track, playlistId, file: undefined };
       await tx.objectStore('tracks').put(trackWithPlaylist);
-      currentLibraryState.tracks.set(track.id, trackWithPlaylist);
-      emitLibraryEvent({ type: 'trackadded', payload: trackWithPlaylist });
+      // Keep File object in memory only
+      currentLibraryState.tracks.set(track.id, { ...trackWithPlaylist, file: track.file });
+      emitLibraryEvent({ type: 'trackadded', payload: { ...trackWithPlaylist, file: track.file } });
     }
     await tx.objectStore('playlists').put(playlist);
     currentLibraryState.playlists.push(playlist);
@@ -373,6 +377,12 @@ export async function loadLibraryFromDB(): Promise<void> {
   currentLibraryState.tracks.clear();
   for (const track of tracks) {
     currentLibraryState.tracks.set(track.id, track);
+  }
+  
+  // Check for fallback playlists that need re-picking
+  const fallbackPlaylists = playlists.filter(p => p.isFallback);
+  if (fallbackPlaylists.length > 0) {
+    console.log('Fallback playlists detected - files need to be re-selected');
   }
   
   if (playlists.length > 0) {
