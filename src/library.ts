@@ -265,6 +265,7 @@ export async function scanMusicFolderFromFiles(files: File[], folderName: string
           lastModified: file.lastModified,
           metadata,
           fileHandle: undefined,
+          file,
         };
         
         tracks.push(track);

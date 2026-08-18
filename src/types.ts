@@ -9,6 +9,7 @@ export interface Track {
   lastModified: number;
   metadata?: TrackMetadata;
   fileHandle?: FileSystemFileHandle;
+  file?: File;
 }
 
 export interface TrackMetadata {

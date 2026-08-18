@@ -144,7 +144,14 @@ export class AudioPlayer {
         const file = await track.fileHandle.getFile();
         return URL.createObjectURL(file);
       } catch (error) {
-        console.error('Failed to create track URL:', error);
+        console.error('Failed to create track URL from fileHandle:', error);
+      }
+    }
+    if (track.file) {
+      try {
+        return URL.createObjectURL(track.file);
+      } catch (error) {
+        console.error('Failed to create track URL from file:', error);
       }
     }
     return null;
