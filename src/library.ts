@@ -189,32 +189,36 @@ export async function pickMusicFolder(): Promise<FileSystemDirectoryHandle | nul
   try {
     const handle = await (window as any).showDirectoryPicker({
       mode: 'readwrite',
-      startIn: 'music-library',
     });
+    const permission = await handle.requestPermission({ mode: 'readwrite' });
+    if (permission !== 'granted') {
+      throw new Error('Permission denied for folder access');
+    }
     return handle;
   } catch (error) {
     if ((error as DOMException).name !== 'AbortError') {
       console.error('Failed to pick folder:', error);
-      emitLibraryEvent({ type: 'error', payload: error });
+      emitLibraryEvent({ type: 'error', payload: error instanceof Error ? error.message : String(error) });
     }
     return null;
   }
 }
 
 export async function scanMusicFolder(folderHandle: FileSystemDirectoryHandle): Promise<Playlist> {
-  const db = await getDB();
-  const playlistName = folderHandle.name;
-  const playlistId = generateId();
-  const folderPath = playlistName;
-  
-  currentLibraryState.isScanning = true;
-  currentLibraryState.scanProgress = 0;
-  emitLibraryEvent({ type: 'scanstart' });
-  
-  const tracks = await scanDirectory(folderHandle, folderPath, playlistId, (current, total) => {
-    currentLibraryState.scanProgress = total > 0 ? Math.round((current / total) * 100) : 0;
-    emitLibraryEvent({ type: 'scanprogress', payload: { current, total } });
-  });
+  try {
+    const db = await getDB();
+    const playlistName = folderHandle.name;
+    const playlistId = generateId();
+    const folderPath = playlistName;
+    
+    currentLibraryState.isScanning = true;
+    currentLibraryState.scanProgress = 0;
+    emitLibraryEvent({ type: 'scanstart' });
+    
+    const tracks = await scanDirectory(folderHandle, folderPath, playlistId, (current, total) => {
+      currentLibraryState.scanProgress = total > 0 ? Math.round((current / total) * 100) : 0;
+      emitLibraryEvent({ type: 'scanprogress', payload: { current, total } });
+    });
   
   const playlist: Playlist = {
     id: playlistId,
@@ -244,6 +248,12 @@ export async function scanMusicFolder(folderHandle: FileSystemDirectoryHandle): 
   emitLibraryEvent({ type: 'scancomplete', payload: playlist });
   
   return playlist;
+  } catch (error) {
+    currentLibraryState.isScanning = false;
+    console.error('Scan failed:', error);
+    emitLibraryEvent({ type: 'error', payload: error instanceof Error ? error.message : String(error) });
+    throw error;
+  }
 }
 
 export async function loadLibraryFromDB(): Promise<void> {
