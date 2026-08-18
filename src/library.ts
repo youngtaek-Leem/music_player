@@ -101,9 +101,15 @@ async function parseMetadata(file: File): Promise<TrackMetadata | undefined> {
     
     const common = metadata.common;
     let coverArt: string | undefined;
+    let coverArtData: TrackMetadata['coverArtData'];
     
     if (metadata.common.picture && metadata.common.picture.length > 0) {
       const pic = metadata.common.picture[0];
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(pic.data)));
+      coverArtData = {
+        data: base64,
+        format: pic.format,
+      };
       const blob = new Blob([pic.data as any], { type: pic.format });
       coverArt = URL.createObjectURL(blob);
     }
@@ -117,6 +123,7 @@ async function parseMetadata(file: File): Promise<TrackMetadata | undefined> {
       year: common.year,
       genre: common.genre,
       coverArt,
+      coverArtData,
     };
   } catch (error) {
     console.warn('Failed to parse metadata:', error);
@@ -369,6 +376,25 @@ export async function scanMusicFolder(folderHandle: FileSystemDirectoryHandle): 
   }
 }
 
+// Regenerate Blob URL for cover art from stored base64 data
+function restoreCoverArt(track: Track): Track {
+  if (track.metadata?.coverArtData && !track.metadata.coverArt) {
+    try {
+      const { data, format } = track.metadata.coverArtData;
+      const binary = atob(data);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: format });
+      track.metadata.coverArt = URL.createObjectURL(blob);
+    } catch (error) {
+      console.warn('Failed to restore cover art:', error);
+    }
+  }
+  return track;
+}
+
 export async function loadLibraryFromDB(): Promise<void> {
   const db = await getDB();
   
@@ -378,7 +404,12 @@ export async function loadLibraryFromDB(): Promise<void> {
   const tracks = await db.getAll('tracks');
   currentLibraryState.tracks.clear();
   for (const track of tracks) {
-    currentLibraryState.tracks.set(track.id, track);
+    currentLibraryState.tracks.set(track.id, restoreCoverArt(track));
+  }
+  
+  // Also restore cover art for tracks in playlists
+  for (const playlist of currentLibraryState.playlists) {
+    playlist.tracks = playlist.tracks.map(restoreCoverArt);
   }
   
   // Check for fallback playlists that need re-picking

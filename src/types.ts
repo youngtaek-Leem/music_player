@@ -20,7 +20,14 @@ export interface TrackMetadata {
   trackNumber?: number;
   year?: number;
   genre?: string[];
+  // Store cover art as base64 data URL for persistence across reloads
+  // Blob URLs (URL.createObjectURL) don't survive page reload
   coverArt?: string;
+  // Raw picture data for regenerating Blob URL after reload
+  coverArtData?: {
+    data: string; // base64 encoded
+    format: string; // mime type
+  };
 }
 
 export interface Playlist {
