@@ -133,7 +133,7 @@ function App() {
   }, [currentPlaylist]);
 
   const handlePickFolder = useCallback(async () => {
-    const hasFileSystemAccess = 'showDirectoryPicker' in window;
+    const hasFileSystemAccess = 'showDirectoryPicker' in window && window.isSecureContext;
     
     if (hasFileSystemAccess) {
       const handle = await pickMusicFolder();
@@ -317,7 +317,7 @@ function App() {
 
       {/* Main Content */}
       <main className="main-content">
-        {currentPlaylist && tracks.length > 0 && (
+        {currentPlaylist && tracks.length > 0 && !currentPlaylist.isFallback && (
           <div className="track-list">
             <div className="track-list-header">
               <div>
@@ -378,7 +378,7 @@ function App() {
           </div>
         )}
 
-        {(!currentPlaylist || tracks.length === 0) && !isScanning && (
+        {(!currentPlaylist || tracks.length === 0 || currentPlaylist.isFallback) && !isScanning && (
           <div className="empty-state full-screen">
             <div className="empty-icon">
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

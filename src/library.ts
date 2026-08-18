@@ -213,7 +213,9 @@ export async function pickMusicFolderFallback(): Promise<File[] | null> {
 }
 
 export async function pickMusicFolder(): Promise<FileSystemDirectoryHandle | null> {
-  if (!('showDirectoryPicker' in window)) {
+  // File System Access API requires a secure context (HTTPS)
+  // On HTTP (localhost), showDirectoryPicker exists but throws SecurityError
+  if (!('showDirectoryPicker' in window) || !window.isSecureContext) {
     const msg = 'File System Access API가 지원되지 않습니다. iOS Safari 15.2+ 또는 Chrome/Edge 최신 버전에서 HTTPS로 접속하세요.';
     console.error(msg);
     emitLibraryEvent({ type: 'error', payload: msg });
