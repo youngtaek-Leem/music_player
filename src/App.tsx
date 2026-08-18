@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { player } from './player';
 import { 
   pickMusicFolder, 
+  pickMusicFolderFallback,
   scanMusicFolder, 
+  scanMusicFolderFromFiles,
   loadLibraryFromDB, 
   deleteTrack,
   getLibraryState,
@@ -135,10 +137,21 @@ function App() {
   }, [currentPlaylist]);
 
   const handlePickFolder = useCallback(async () => {
-    const handle = await pickMusicFolder();
-    if (handle) {
-      setShowFolderPicker(false);
-      await scanMusicFolder(handle);
+    const hasFileSystemAccess = 'showDirectoryPicker' in window;
+    
+    if (hasFileSystemAccess) {
+      const handle = await pickMusicFolder();
+      if (handle) {
+        setShowFolderPicker(false);
+        await scanMusicFolder(handle);
+      }
+    } else {
+      const files = await pickMusicFolderFallback();
+      if (files && files.length > 0) {
+        setShowFolderPicker(false);
+        const folderName = 'iCloud Music';
+        await scanMusicFolderFromFiles(files, folderName);
+      }
     }
   }, []);
 

@@ -185,6 +185,33 @@ async function scanDirectory(
   return tracks;
 }
 
+export async function pickMusicFolderFallback(): Promise<File[] | null> {
+  return new Promise((resolve) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    (input as any).webkitdirectory = true;
+    input.multiple = true;
+    input.accept = '.mp3,.m4a,.flac,.wav,.aac,.ogg,.opus,.webm';
+    input.style.display = 'none';
+    
+    input.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      const files = Array.from(target.files || []);
+      const audioFiles = files.filter(f => isSupportedAudioFile(f.name));
+      resolve(audioFiles.length > 0 ? audioFiles : null);
+      document.body.removeChild(input);
+    };
+    
+    input.oncancel = () => {
+      resolve(null);
+      document.body.removeChild(input);
+    };
+    
+    document.body.appendChild(input);
+    input.click();
+  });
+}
+
 export async function pickMusicFolder(): Promise<FileSystemDirectoryHandle | null> {
   if (!('showDirectoryPicker' in window)) {
     const msg = 'File System Access API가 지원되지 않습니다. iOS Safari 15.2+ 또는 Chrome/Edge 최신 버전에서 HTTPS로 접속하세요.';
@@ -208,6 +235,78 @@ export async function pickMusicFolder(): Promise<FileSystemDirectoryHandle | nul
       emitLibraryEvent({ type: 'error', payload: error instanceof Error ? error.message : String(error) });
     }
     return null;
+  }
+}
+
+export async function scanMusicFolderFromFiles(files: File[], folderName: string): Promise<Playlist> {
+  try {
+    const db = await getDB();
+    const playlistId = generateId();
+    const folderPath = folderName;
+    
+    currentLibraryState.isScanning = true;
+    currentLibraryState.scanProgress = 0;
+    emitLibraryEvent({ type: 'scanstart' });
+    
+    const tracks: Track[] = [];
+    let processedCount = 0;
+    const total = files.length;
+    
+    for (const file of files) {
+      try {
+        const metadata = await parseMetadata(file);
+        
+        const track: Track = {
+          id: generateId(),
+          name: metadata?.title || file.name,
+          path: file.name,
+          relativePath: file.name,
+          size: file.size,
+          lastModified: file.lastModified,
+          metadata,
+          fileHandle: undefined,
+        };
+        
+        tracks.push(track);
+      } catch (error) {
+        console.warn(`Failed to process file ${file.name}:`, error);
+      }
+      processedCount++;
+      currentLibraryState.scanProgress = Math.round((processedCount / total) * 100);
+      emitLibraryEvent({ type: 'scanprogress', payload: { current: processedCount, total } });
+    }
+    
+    const playlist: Playlist = {
+      id: playlistId,
+      name: folderName,
+      tracks,
+      folderPath,
+      folderHandle: undefined,
+    };
+    
+    const tx = db.transaction(['tracks', 'playlists'], 'readwrite');
+    for (const track of tracks) {
+      const trackWithPlaylist = { ...track, playlistId };
+      await tx.objectStore('tracks').put(trackWithPlaylist);
+      currentLibraryState.tracks.set(track.id, trackWithPlaylist);
+      emitLibraryEvent({ type: 'trackadded', payload: trackWithPlaylist });
+    }
+    await tx.objectStore('playlists').put(playlist);
+    currentLibraryState.playlists.push(playlist);
+    currentLibraryState.lastScannedFolder = folderPath;
+    
+    await tx.done;
+    
+    currentLibraryState.isScanning = false;
+    currentLibraryState.scanProgress = 100;
+    emitLibraryEvent({ type: 'scancomplete', payload: playlist });
+    
+    return playlist;
+  } catch (error) {
+    currentLibraryState.isScanning = false;
+    console.error('Scan failed:', error);
+    emitLibraryEvent({ type: 'error', payload: error instanceof Error ? error.message : String(error) });
+    throw error;
   }
 }
 
