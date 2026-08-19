@@ -208,6 +208,12 @@ function App() {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
+  // Fallback playlists only need re-picking when the actual File objects are
+  // gone (e.g. after a page reload, since they live in memory only). Right
+  // after a fresh scan the tracks still carry their `file`, so the list
+  // should render normally instead of always showing the re-pick prompt.
+  const needsRepick = !!currentPlaylist?.isFallback && tracks.length > 0 && !tracks.some(t => t.file);
+
   const repeatLabels = {
     off: '반복 안 함',
     file: '한 곡 반복',
@@ -317,7 +323,7 @@ function App() {
 
       {/* Main Content */}
       <main className="main-content">
-        {currentPlaylist && tracks.length > 0 && !currentPlaylist.isFallback && (
+        {currentPlaylist && tracks.length > 0 && !needsRepick && (
           <div className="track-list">
             <div className="track-list-header">
               <div>
@@ -354,8 +360,9 @@ function App() {
                     <span className="track-duration">
                       {track.metadata?.duration ? formatTime(track.metadata.duration) : '--:--'}
                     </span>
-                    <button 
+                    <button
                       className="icon-btn delete-btn"
+                      style={track.fileHandle ? undefined : { display: 'none' }}
                       onClick={(e) => handleDeleteTrack(track.id, e)}
                       aria-label="삭제"
                     >
@@ -378,7 +385,7 @@ function App() {
           </div>
         )}
 
-        {(!currentPlaylist || tracks.length === 0 || currentPlaylist.isFallback) && !isScanning && (
+        {(!currentPlaylist || tracks.length === 0 || needsRepick) && !isScanning && (
           <div className="empty-state full-screen">
             <div className="empty-icon">
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -388,7 +395,7 @@ function App() {
                 <circle cx="18" cy="16" r="3"></circle>
               </svg>
             </div>
-            {currentPlaylist?.isFallback ? (
+            {needsRepick ? (
               <>
                 <p className="empty-title">파일을 다시 선택해주세요</p>
                 <p className="empty-desc">앱을 다시 열면 파일 접근 권한이 초기화됩니다.<br/>폴더 선택 버튼을 눌러 음악 파일을 다시 선택하세요.</p>
@@ -403,7 +410,7 @@ function App() {
               <svg className="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
               </svg>
-              {currentPlaylist?.isFallback ? '다시 선택' : '폴더 선택'}
+              {needsRepick ? '다시 선택' : '폴더 선택'}
             </button>
           </div>
         )}

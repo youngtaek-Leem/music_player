@@ -90,7 +90,7 @@ body {
 .app {
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: var(--header-height) 1fr var(--player-height);
+  grid-template-rows: var(--header-height) 1fr auto;
   grid-template-areas:
     "header"
     "main"
@@ -355,7 +355,6 @@ body {
 
 .empty-state.full-screen {
   min-height: 100%;
-  min-height: 100dvh;
 }
 
 .empty-icon {
@@ -449,7 +448,7 @@ body {
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis.
+  text-overflow: ellipsis;
 }
 
 .playlist-count {
@@ -565,14 +564,14 @@ body {
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis.
+  text-overflow: ellipsis;
 }
 
 .track-meta {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0.
+  flex-shrink: 0;
 }
 
 .track-duration {
@@ -593,18 +592,18 @@ body {
   color: var(--text-tertiary);
   opacity: 0;
   transform: translateX(8px);
-  transition: all var(--transition-fast).
+  transition: all var(--transition-fast);
 }
 
 .track-item:hover .icon-btn.delete-btn,
 .track-item:focus-within .icon-btn.delete-btn {
   opacity: 1;
-  transform: translateX(0).
+  transform: translateX(0);
 }
 
 .icon-btn.delete-btn:hover {
   background: rgba(255, 69, 58, 0.15);
-  color: var(--danger).
+  color: var(--danger);
 }
 
 .playing-indicator {
@@ -613,7 +612,7 @@ body {
   gap: 2px;
   padding-left: 8px;
   width: 28px;
-  height: 28px.
+  height: 28px;
 }
 
 .eq-bar {
@@ -621,7 +620,7 @@ body {
   height: 16px;
   background: var(--accent);
   border-radius: 2px;
-  animation: eq 1.2s ease-in-out infinite.
+  animation: eq 1.2s ease-in-out infinite;
 }
 
 .eq-bar:nth-child(1) { animation-delay: 0ms; height: 16px; }
@@ -638,10 +637,10 @@ body {
   inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center.
+  justify-content: center;
   background: var(--bg-primary);
   z-index: 50;
-  padding: 24px.
+  padding: 24px;
 }
 
 .scanning-card {
@@ -655,7 +654,7 @@ body {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-lg);
   max-width: 300px;
-  width: 100%.
+  width: 100%;
 }
 
 .scanning-spinner {
@@ -664,7 +663,7 @@ body {
   border: 3px solid var(--border);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: spin 1s linear infinite.
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -674,7 +673,7 @@ body {
 .scanning-title {
   font-size: 17px;
   font-weight: 600;
-  color: var(--text-primary).
+  color: var(--text-primary);
 }
 
 .scanning-progress-bar {
@@ -682,20 +681,20 @@ body {
   height: 6px;
   background: var(--bg-tertiary);
   border-radius: var(--radius-full);
-  overflow: hidden.
+  overflow: hidden;
 }
 
 .scanning-progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--accent), #0a84ff);
   border-radius: var(--radius-full);
-  transition: width 0.3s ease.
+  transition: width 0.3s ease;
 }
 
 .scanning-percent {
   font-size: 15px;
   font-variant-numeric: tabular-nums;
-  color: var(--text-secondary).
+  color: var(--text-secondary);
 }
 
 .player-bar {
@@ -709,7 +708,7 @@ body {
   padding: 0 16px;
   padding-bottom: max(16px, var(--safe-bottom));
   min-height: var(--player-height);
-  z-index: 100.
+  z-index: 100;
 }
 
 @media (prefers-color-scheme: light) {
@@ -723,7 +722,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 8px 0 4px;
-  min-height: 56px.
+  min-height: 56px;
 }
 
 .track-artwork {
@@ -731,16 +730,16 @@ body {
   width: 56px;
   height: 56px;
   border-radius: var(--radius-sm);
-  overflow: hidden.
+  overflow: hidden;
   flex-shrink: 0;
-  background: var(--bg-tertiary).
+  background: var(--bg-tertiary);
 }
 
 .track-artwork img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-normal).
+  transition: transform var(--transition-normal);
 }
 
 .track-artwork .artwork-ring {
@@ -749,7 +748,7 @@ body {
   border: 2px solid var(--accent);
   border-radius: calc(var(--radius-sm) + 4px);
   opacity: 0;
-  animation: ringPulse 2s ease-out infinite.
+  animation: ringPulse 2s ease-out infinite;
 }
 
 @keyframes ringPulse {
@@ -762,9 +761,9 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center.
+  justify-content: center;
   color: var(--text-tertiary);
-  background: var(--bg-tertiary).
+  background: var(--bg-tertiary);
 }
 
 .track-info {
@@ -772,7 +771,7 @@ body {
   flex-direction: column;
   gap: 2px;
   min-width: 0;
-  flex: 1.
+  flex: 1;
 }
 
 .track-info .track-title {
@@ -780,7 +779,7 @@ body {
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis.
+  text-overflow: ellipsis;
 }
 
 .track-info .track-artist {
@@ -788,39 +787,53 @@ body {
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis.
+  text-overflow: ellipsis;
 }
 
 .player-controls {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas:
+    "progress progress progress"
+    "spacer controls volume";
   align-items: center;
-  gap: 16px;
-  padding: 4px 0 8px.
+  row-gap: 6px;
+  column-gap: 12px;
+  padding: 4px 0 8px;
 }
 
 .progress-container {
+  grid-area: progress;
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 0.
+  min-width: 0;
 }
 
 .time {
   font-size: 11px;
-  font-variant-numeric: tabular-nums.
+  font-variant-numeric: tabular-nums;
   color: var(--text-tertiary);
-  min-width: 36px.
+  min-width: 36px;
 }
 
 .time.current {
-  text-align: right.
+  text-align: right;
 }
 
 .progress-wrapper {
   position: relative;
   flex: 1;
-  height: 4px.
+  height: 4px;
+}
+
+.progress-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-quaternary);
+  border-radius: var(--radius-full);
+  z-index: 0;
 }
 
 .progress-bar {
@@ -830,11 +843,11 @@ body {
   appearance: none;
   background: transparent;
   cursor: pointer;
-  z-index: 2.
+  z-index: 2;
 }
 
 .progress-bar:focus-visible {
-  outline: none.
+  outline: none;
 }
 
 .progress-bar::-webkit-slider-thumb {
@@ -846,16 +859,16 @@ body {
   background: var(--accent);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast).
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .progress-bar::-webkit-slider-thumb:hover {
   transform: scale(1.25);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4).
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
 }
 
 .progress-bar::-webkit-slider-thumb:active {
-  transform: scale(1.4).
+  transform: scale(1.4);
 }
 
 .progress-bar::-moz-range-thumb {
@@ -864,7 +877,7 @@ body {
   border: none;
   border-radius: 50%;
   background: var(--accent);
-  cursor: pointer.
+  cursor: pointer;
 }
 
 .progress-fill {
@@ -875,7 +888,7 @@ body {
   background: var(--accent);
   border-radius: var(--radius-full);
   pointer-events: none;
-  z-index: 1.
+  z-index: 1;
 }
 
 .progress-thumb {
@@ -888,20 +901,22 @@ body {
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);
   pointer-events: none;
-  z-index: 1.
-  transition: transform var(--transition-fast).
+  z-index: 1;
+  transition: transform var(--transition-fast);
 }
 
 .progress-wrapper:hover .progress-thumb,
 .progress-bar:focus-visible + .progress-fill + .progress-thumb {
-  transform: translate(-50%, -50%) scale(1).
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .control-buttons {
+  grid-area: controls;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  flex-shrink: 0.
+  flex-shrink: 0;
 }
 
 .control-btn {
@@ -909,7 +924,7 @@ body {
   height: 44px;
   display: flex;
   align-items: center;
-  justify-content: center.
+  justify-content: center;
 }
 
 .control-btn.play-btn {
@@ -919,52 +934,72 @@ body {
   color: var(--bg-primary);
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast).
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .control-btn.play-btn:hover {
   transform: scale(1.05);
-  box-shadow: var(--shadow-lg).
+  box-shadow: var(--shadow-lg);
 }
 
 .control-btn.play-btn:active {
-  transform: scale(0.95).
+  transform: scale(0.95);
 }
 
 .control-btn.play-btn svg {
-  display: block.
+  display: block;
 }
 
 .control-btn.active {
-  color: var(--accent).
+  color: var(--accent);
 }
 
 .volume-container {
+  grid-area: volume;
   display: flex;
   align-items: center;
   gap: 10px;
   justify-content: flex-end;
-  flex-shrink: 0.
+  flex-shrink: 0;
+}
+
+/* On phone-width screens there isn't room for shuffle/prev/play/next/repeat
+   plus a volume slider on one row. iOS also has hardware volume buttons, so
+   the inline slider is dropped in favor of just the mute toggle; the full
+   slider returns once there's enough width (tablet/landscape/desktop). */
+@media (max-width: 640px) {
+  .volume-wrapper {
+    display: none;
+  }
 }
 
 .volume-btn {
   width: 40px;
-  height: 40px.
-  color: var(--text-secondary).
+  height: 40px;
+  color: var(--text-secondary);
 }
 
 .volume-btn:hover {
-  color: var(--text-primary).
+  color: var(--text-primary);
 }
 
 .volume-btn.active {
-  color: var(--accent).
+  color: var(--accent);
 }
 
 .volume-wrapper {
   position: relative;
   width: 96px;
-  height: 4px.
+  height: 4px;
+}
+
+.volume-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--bg-quaternary);
+  border-radius: var(--radius-full);
+  z-index: 0;
 }
 
 .volume-slider {
@@ -974,11 +1009,11 @@ body {
   appearance: none;
   background: transparent;
   cursor: pointer;
-  z-index: 2.
+  z-index: 2;
 }
 
 .volume-slider:focus-visible {
-  outline: none.
+  outline: none;
 }
 
 .volume-slider::-webkit-slider-thumb {
@@ -990,11 +1025,11 @@ body {
   background: var(--text-primary);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  transition: transform var(--transition-fast).
+  transition: transform var(--transition-fast);
 }
 
 .volume-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.25).
+  transform: scale(1.25);
 }
 
 .volume-slider::-moz-range-thumb {
@@ -1003,58 +1038,58 @@ body {
   border: none;
   border-radius: 50%;
   background: var(--text-primary);
-  cursor: pointer.
+  cursor: pointer;
 }
 
 .volume-fill {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 0.
+  left: 0;
   background: var(--text-secondary);
-  border-radius: var(--radius-full).
-  pointer-events: none.
-  z-index: 1.
+  border-radius: var(--radius-full);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .volume-thumb {
   position: absolute;
   top: 50%;
-  left: 0.
+  left: 0;
   width: 10px;
-  height: 10px.
-  background: var(--text-primary).
-  border-radius: 50%.
-  transform: translate(-50%, -50%) scale(0).
-  pointer-events: none.
-  z-index: 1.
-  transition: transform var(--transition-fast).
+  height: 10px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+  z-index: 1;
+  transition: transform var(--transition-fast);
 }
 
 .volume-wrapper:hover .volume-thumb,
 .volume-slider:focus-visible + .volume-fill + .volume-thumb {
-  transform: translate(-50%, -50%) scale(1).
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .toast {
-  position: fixed.
-  bottom: calc(var(--player-height) + 16px).
+  position: fixed;
+  bottom: calc(var(--player-height) + 16px);
   left: 50%;
-  transform: translateX(-50%) translateY(100px).
-  display: flex.
-  align-items: center.
-  gap: 12px.
-  padding: 12px 16px.
-  background: var(--bg-secondary).
-  border: 1px solid var(--border).
-  border-radius: var(--radius-lg).
-  box-shadow: var(--shadow-lg).
-  backdrop-filter: var(--blur).
-  -webkit-backdrop-filter: var(--blur).
-  z-index: 1000.
-  opacity: 0.
-  transition: transform var(--transition-normal), opacity var(--transition-normal).
-  animation: toastIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards.
+  transform: translateX(-50%) translateY(100px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  z-index: 1000;
+  opacity: 0;
+  transition: transform var(--transition-normal), opacity var(--transition-normal);
+  animation: toastIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @keyframes toastIn {
@@ -1065,48 +1100,48 @@ body {
 }
 
 .toast-close {
-  display: flex.
-  align-items: center.
-  justify-content: center.
-  width: 28px.
-  height: 28px.
-  border: none.
-  border-radius: var(--radius-full).
-  background: transparent.
-  color: var(--text-tertiary).
-  cursor: pointer.
-  transition: background-color var(--transition-fast), color var(--transition-fast).
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .toast-close:hover {
-  background: var(--bg-tertiary).
-  color: var(--text-primary).
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
 }
 
 .modal-overlay {
-  position: fixed.
-  inset: 0.
-  display: flex.
-  align-items: flex-end.
-  justify-content: center.
-  background: rgba(0, 0, 0, 0.4).
-  backdrop-filter: blur(8px).
-  -webkit-backdrop-filter: blur(8px).
-  z-index: 400.
-  padding: 0 16px 16px.
-  padding-bottom: max(16px, var(--safe-bottom)).
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 400;
+  padding: 0 16px 16px;
+  padding-bottom: max(16px, var(--safe-bottom));
 }
 
 .modal {
-  width: 100%.
-  max-width: 380px.
-  background: var(--bg-secondary).
-  border-radius: var(--radius-xl).
-  box-shadow: var(--shadow-xl).
-  padding: 24px.
-  transform: translateY(20px).
-  opacity: 0.
-  animation: modalIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards.
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: 24px;
+  transform: translateY(20px);
+  opacity: 0;
+  animation: modalIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @keyframes modalIn {
@@ -1117,45 +1152,45 @@ body {
 }
 
 .modal-handle {
-  width: var(--sheet-handle-size).
-  height: 5px.
-  margin: 0 auto 20px.
-  background: var(--text-tertiary).
-  border-radius: var(--radius-full).
-  opacity: 0.4.
+  width: var(--sheet-handle-size);
+  height: 5px;
+  margin: 0 auto 20px;
+  background: var(--text-tertiary);
+  border-radius: var(--radius-full);
+  opacity: 0.4;
 }
 
 .modal-title {
-  font-size: 20px.
-  font-weight: 600.
-  text-align: center.
-  margin-bottom: 8px.
-  letter-spacing: -0.022em.
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: -0.022em;
 }
 
 .modal-desc {
-  font-size: 15px.
-  color: var(--text-secondary).
-  text-align: center.
-  margin-bottom: 4px.
-  line-height: 1.5.
+  font-size: 15px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 4px;
+  line-height: 1.5;
 }
 
 .modal-hint {
-  font-size: 13px.
-  color: var(--text-tertiary).
-  text-align: center.
-  margin-bottom: 24px.
-  line-height: 1.5.
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
 }
 
 .modal-actions {
-  display: flex.
-  gap: 12px.
+  display: flex;
+  gap: 12px;
 }
 
 .modal-actions .btn {
-  flex: 1.
+  flex: 1;
 }
 
 @media (max-width: 480px) {

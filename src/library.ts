@@ -198,7 +198,10 @@ export async function pickMusicFolderFallback(): Promise<File[] | null> {
     input.type = 'file';
     (input as any).webkitdirectory = true;
     input.multiple = true;
-    input.accept = '.mp3,.m4a,.flac,.wav,.aac,.ogg,.opus,.webm';
+    // NOTE: do NOT set `accept` here. On iOS Safari, combining `accept` with
+    // `webkitdirectory` hides the "Browse" (Files/iCloud Drive) option from
+    // the picker sheet, breaking folder selection entirely. Audio files are
+    // filtered after selection instead (see isSupportedAudioFile below).
     input.style.display = 'none';
     
     input.onchange = (e) => {
@@ -298,14 +301,19 @@ export async function scanMusicFolderFromFiles(files: File[], folderName: string
     // For fallback mode, only store metadata in IndexedDB, not File objects
     // File objects are kept only in memory (currentLibraryState.tracks)
     const tx = db.transaction(['tracks', 'playlists'], 'readwrite');
+    const tracksForDB: Track[] = [];
     for (const track of tracks) {
       const trackWithPlaylist = { ...track, playlistId, file: undefined };
       await tx.objectStore('tracks').put(trackWithPlaylist);
+      tracksForDB.push(trackWithPlaylist);
       // Keep File object in memory only
       currentLibraryState.tracks.set(track.id, { ...trackWithPlaylist, file: track.file });
       emitLibraryEvent({ type: 'trackadded', payload: { ...trackWithPlaylist, file: track.file } });
     }
-    await tx.objectStore('playlists').put(playlist);
+    // Persist the playlist without File blobs; the in-memory copy (pushed
+    // below and returned to callers) keeps `file` so playback works
+    // immediately in this session without needing a re-pick.
+    await tx.objectStore('playlists').put({ ...playlist, tracks: tracksForDB });
     currentLibraryState.playlists.push(playlist);
     currentLibraryState.lastScannedFolder = folderPath;
     
