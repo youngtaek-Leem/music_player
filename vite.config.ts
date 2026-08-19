@@ -40,19 +40,15 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/youngtaek-Leem\.github\.io\/music_player\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'github-pages-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
-          }
-        ],
+        // Precaching (globPatterns above) already covers all build assets
+        // with content-hash-based revisioning, which correctly invalidates
+        // on every deploy. A runtimeCaching CacheFirst rule for the whole
+        // origin previously lived here and caused navigation requests
+        // (e.g. "/music_player/") to get stuck on the first-ever cached
+        // response for 30 days, since CacheFirst never re-checks the
+        // network once something is cached. Do not re-add broad
+        // origin-wide runtime caching without NetworkFirst or similar.
+        navigateFallback: '/music_player/index.html',
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true
