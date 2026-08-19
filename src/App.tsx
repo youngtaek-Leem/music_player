@@ -49,6 +49,12 @@ function App() {
         setCurrentPlaylist(firstPlaylist);
         setTracks(firstPlaylist.tracks);
       }
+
+      player.resumeLastTrack(Array.from(state.tracks.values())).then(resumed => {
+        if (resumed) {
+          setTracks(player.getQueue());
+        }
+      });
     });
 
     const unsubscribeLibrary = onLibraryEvent((event: LibraryEvent) => {
@@ -62,17 +68,20 @@ function App() {
             setScanProgress((event.payload as { current: number }).current);
           }
           break;
-        case 'scancomplete':
+        case 'scancomplete': {
           setIsScanning(false);
           setScanProgress(100);
           const newState = getLibraryState();
           setPlaylists(newState.playlists);
-          if (newState.playlists.length > 0 && !currentPlaylist) {
-            const first = newState.playlists[0];
-            setCurrentPlaylist(first);
-            setTracks(first.tracks);
-          }
+          const newPlaylist = event.payload as Playlist;
+          // Only auto-select the freshly scanned playlist if nothing is
+          // selected yet; a functional update avoids depending on
+          // `currentPlaylist` so this subscription doesn't need to be
+          // re-created (and loadLibraryFromDB re-run, clobbering the
+          // in-memory File objects) every time the selection changes.
+          setCurrentPlaylist(prev => prev ?? newPlaylist);
           break;
+        }
         case 'trackadded':
           break;
         case 'error':
@@ -113,17 +122,11 @@ function App() {
       }
     });
 
-    player.resumeLastTrack(tracks).then(resumed => {
-      if (resumed) {
-        setTracks(player.getQueue());
-      }
-    });
-
     return () => {
       unsubscribeLibrary();
       unsubscribePlayer();
     };
-  }, [currentPlaylist]);
+  }, []);
 
   useEffect(() => {
     if (currentPlaylist) {
